@@ -15,6 +15,9 @@ jobs:
 
     runs-on: self-hosted
     if: "!contains(github.event.commits[0].message, '[ci-skip]')"
+    environment: 
+      name: production
+      url: https://proxy-utils.sageee.xyz
 
     steps:
     - name: Checkout 🙃
