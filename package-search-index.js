@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"de.sage.utils"},{"l":"de.sage.utils.commds"},{"l":"de.sage.utils.events"}];updateSearchResults();
