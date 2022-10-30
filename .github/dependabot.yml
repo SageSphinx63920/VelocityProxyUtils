@@ -1,0 +1,19 @@
+version: 2
+updates:
+ - package-ecosystem: maven
+   directory: "/"
+   schedule:
+     interval: daily
+     time: "08:00"
+   open-pull-requests-limit: 3
+   assignees: 
+     - "SageSphinx63920"
+   labels:
+     - "update"
+     
+ - package-ecosystem: github-actions
+   directory: "/"
+   ignore:
+    - dependency-name: "actions/checkout*" #Buggy on my windows server
+   schedule:
+      interval: "weekly"
