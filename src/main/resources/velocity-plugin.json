@@ -1,0 +1,10 @@
+{
+  "id":"proxy-utils",
+  "name":"VelocityProxyUtils",
+  "version":"0.0.1",
+  "description":"Simple proxy command everybody needs.",
+  "url":"https://sagesphinx63920.dev",
+  "authors":["SageSphinx63920"],
+  "dependencies":[],
+  "main":"de.sage.utils.ProxyUtils"
+}
