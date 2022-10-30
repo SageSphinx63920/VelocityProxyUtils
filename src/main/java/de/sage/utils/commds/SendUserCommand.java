@@ -111,7 +111,7 @@ public class SendUserCommand implements SimpleCommand {
         } else if (invocation.arguments().length == 1) {
             if (invocation.arguments()[0].equalsIgnoreCase("player")) {
                 return CompletableFuture.completedFuture(ProxyUtils.getInstance().getProxy().getAllPlayers().stream().map(Player::getUsername).collect(Collectors.toList()));
-            } else if (invocation.arguments()[0].equalsIgnoreCase("server")) {
+            } else if (invocation.arguments()[0].equalsIgnoreCase("server") || invocation.arguments()[0].equalsIgnoreCase("all")) {
                 return CompletableFuture.completedFuture(ProxyUtils.getInstance().getProxy().getAllServers().stream().map(server -> server.getServerInfo().getName()).collect(Collectors.toList()));
             } else if (invocation.arguments()[0].equalsIgnoreCase("current")) {
                 return CompletableFuture.completedFuture(ProxyUtils.getInstance().getProxy().getAllServers().stream().map(server -> server.getServerInfo().getName()).collect(Collectors.toList()));
@@ -131,10 +131,22 @@ public class SendUserCommand implements SimpleCommand {
     }
 
 
+    /**
+     * Checks if the server exists
+     *
+     * @param serverName The name of the server to check
+     * @return true if the server exists
+     */
     private boolean doServerValidation(String serverName) {
         return ProxyUtils.getInstance().getProxy().getAllServers().stream().anyMatch(server -> server.getServerInfo().getName().equalsIgnoreCase(serverName));
     }
 
+    /**
+     * Checks if the player in online on the proxy
+     *
+     * @param playerName The name of the player to check
+     * @return true if the player is online
+     */
     private boolean doPlayerValidation(String playerName) {
         return ProxyUtils.getInstance().getProxy().getAllPlayers().stream().anyMatch(player -> player.getUsername().equalsIgnoreCase(playerName));
     }
