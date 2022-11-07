@@ -34,7 +34,7 @@ jobs:
       run: git config --global user.email "actions@sagesphinx63920.dev"
       
     - name: Setup Maven 3.8.6 🔮
-      uses: stCarolas/setup-maven@v4.4
+      uses: stCarolas/setup-maven@v4.5
       with:
         maven-version: 3.8.6
         
@@ -63,7 +63,7 @@ jobs:
         distribution: 'corretto'
         
     - name: Setup Maven 3.8.6 🔮
-      uses: stCarolas/setup-maven@v4.4
+      uses: stCarolas/setup-maven@v4.5
       with:
         maven-version: 3.8.6
         
