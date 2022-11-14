@@ -1,5 +1,6 @@
 package de.sage.utils;
 
+import com.google.gson.reflect.TypeToken;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.EventManager;
 import com.velocitypowered.api.event.Subscribe;
@@ -11,16 +12,24 @@ import com.velocitypowered.api.proxy.ProxyServer;
 
 import de.sage.utils.commds.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.internal.parser.TokenType;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 
 import de.sage.utils.events.TabResetEvent;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import lombok.Getter;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ConfigurationOptions;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.slf4j.Logger;
 import com.google.inject.Inject;
+import org.yaml.snakeyaml.DumperOptions;
 
 @Plugin(id = "proxy-utils", name = "VelocityProxyUtils", version = "0.0.1-SNAPSHOT",
         url = "https://sagesphinx63920.dev", description = "Simple proxy command everybody needs.", authors = {"SageSphinx63920"})
@@ -30,6 +39,8 @@ public class ProxyUtils {
     private final Logger logger;
     private final Path dataDirectory;
     private static ProxyUtils instance;
+    private @Getter YAMLConfigurationLoader configLoader = null;
+
     private final @Getter MiniMessage miniMessage = MiniMessage.builder().tags(
             TagResolver.builder()
                     .resolver(StandardTags.color())
@@ -50,6 +61,22 @@ public class ProxyUtils {
 
         instance = this;
 
+        try {
+            if (!dataDirectory.toFile().exists()) {
+                dataDirectory.toFile().mkdirs();
+                dataDirectory.resolve("config.yml").toFile().createNewFile();
+            }
+
+            this.configLoader = YAMLConfigurationLoader.builder().setPath(dataDirectory.resolve("config.yml")).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build();
+
+            final ConfigurationNode conf = configLoader.load();
+            //TODO : Maybe create some methond for this
+            conf.getNode("functions").getNode("resetTablistOnServerChange").setValue(true);
+            configLoader.save(conf);
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
         logger.info("Hello there! I made my first plugin with Velocity.");
     }
 
@@ -64,7 +91,6 @@ public class ProxyUtils {
         commandManager.register(commandManager.metaBuilder("jump").aliases("jumpto").plugin(this).build(), new JumpCommand());
         commandManager.register(commandManager.metaBuilder("alert").plugin(this).build(), new AlertCommand());
 
-        eventManager.register(this, this);
         eventManager.register(this, new TabResetEvent());
     }
 
