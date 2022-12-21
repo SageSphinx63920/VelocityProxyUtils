@@ -11,6 +11,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 
 import de.sage.utils.commds.*;
+import de.sage.utils.util.ConfigUtil;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.internal.parser.TokenType;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -36,10 +37,10 @@ import org.yaml.snakeyaml.DumperOptions;
 public class ProxyUtils {
 
     private final @Getter ProxyServer proxy;
-    private final Logger logger;
+    private final @Getter Logger logger;
     private final Path dataDirectory;
     private static ProxyUtils instance;
-    private @Getter YAMLConfigurationLoader configLoader = null;
+    private @Getter ConfigUtil config;
 
     private final @Getter MiniMessage miniMessage = MiniMessage.builder().tags(
             TagResolver.builder()
@@ -54,27 +55,18 @@ public class ProxyUtils {
     ).build();
 
     @Inject
-    public ProxyUtils(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
+    public ProxyUtils(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) throws IOException {
         this.proxy = server;
         this.logger = logger;
         this.dataDirectory = dataDirectory;
 
         instance = this;
 
-        try {
-            if (!dataDirectory.toFile().exists()) {
-                dataDirectory.toFile().mkdirs();
-                dataDirectory.resolve("config.yml").toFile().createNewFile();
-            }
+        config = new ConfigUtil(dataDirectory, "config.yml");
 
-            this.configLoader = YAMLConfigurationLoader.builder().setPath(dataDirectory.resolve("config.yml")).setFlowStyle(DumperOptions.FlowStyle.BLOCK).build();
 
-            final ConfigurationNode conf = configLoader.load();
-            //TODO : Maybe create some methond for this
-            conf.getNode("functions").getNode("resetTablistOnServerChange").setValue(true);
-            configLoader.save(conf);
-        } catch (IOException exception) {
-            exception.printStackTrace();
+        if((Boolean) config.getOption(true, "functions", "maintenanceMode")) {
+            logger.info("Maintenance mode is enabled!");
         }
 
         logger.info("Hello there! I made my first plugin with Velocity.");
